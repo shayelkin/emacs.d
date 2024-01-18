@@ -122,12 +122,7 @@ Image types are symbols like `xbm' or `jpeg'."
 ;;;        Emacs 28.
 
 
-;;; Function keys:
-
-(global-set-key (kbd "<f5>") 'fill-paragraph)
-(add-hook 'emacs-lisp-mode-hook
-          (lambda ()
-            (local-set-key (kbd "<f7>") 'eval-last-sexp)))
+(global-set-key (kbd "M-<return>") 'fill-paragraph)
 
 
 ;;; Probably the only CUA bindings I use.
@@ -168,8 +163,11 @@ Image types are symbols like `xbm' or `jpeg'."
 (global-set-key (kbd "M->") 'pop-tag-mark)
 
 
-;;; On macOS, disable command-t, command-q, command-w, and rebind the latter to copy (M-w).
+;;; Command key shortcuts for macOS (Emacs maps command to super).
 (when on-mac-window-system
+  ;; Maximize the frame (or restore to pre-maximized value)
+  (global-set-key   (kbd "s-<return>") 'toggle-frame-maximized)
+  ;;  Disable command-t, command-q, command-w, and rebind the latter to copy (M-w).
   (global-unset-key (kbd "s-t"))
   (global-unset-key (kbd "s-w"))
   (global-set-key   (kbd "s-w") 'kill-ring-save)
@@ -215,10 +213,6 @@ Image types are symbols like `xbm' or `jpeg'."
 ;;; I use use-package for built in packages too. This keeps the per-package configuration neatly
 ;;; organized.
 
-(use-package ispell
-  :defer t
-  :bind
-  ("<f8>" . ispell-word))
 
 ;;; Always server-start on a graphical system.
 (use-package server
@@ -402,7 +396,7 @@ Image types are symbols like `xbm' or `jpeg'."
   :init
   (setq copilot-indent-offset-warning-disable t)
   :bind
-  (("<f9>"  . copilot-mode)
+  (("<f9>"       . copilot-mode)
    ("C-<return>" . copilot-accept-completion)))
 
 
@@ -486,10 +480,7 @@ Image types are symbols like `xbm' or `jpeg'."
 ;;; The child of literate programming and Calc mode. Inline arithmetic in text
 ;;; buffers, super useful for writing reports, or just trying to figure out my
 ;;; own personal budget. <https://github.com/sulami/literate-calc-mode.el>
-(use-package literate-calc-mode
-  :bind
-  ("<f7>"   . literate-calc-eval-line)
-  ("<S-f7>" . literate-calc-minor-mode))
+(use-package literate-calc-mode)
 
 
 

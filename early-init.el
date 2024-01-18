@@ -22,7 +22,11 @@
 ;;; the frame is created takes ~0.2s).
 (add-to-list 'default-frame-alist '(tool-bar-lines . 0))
 (add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
-(add-to-list 'default-frame-alist '(width  . 120))
+;;; I have a really big screen, so a maximized frame is too tall and too wide for my taste. 200 by
+;;; 50 covers most, but not all, of a 13" laptop screen (which is the smallest I currently use).
+(add-to-list 'default-frame-alist '(width . 200))
+(add-to-list 'default-frame-alist '(height . 50))
+
 
 
 ;;; Define after-make-frame-functions here, so it'll take effect for the initial frame too.
