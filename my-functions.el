@@ -1,9 +1,17 @@
-;;; site-functions.el
+;;;
+;;; my-functions.el --- Useful stuff that isn't just customizations.
+;;;
+
+
+(defconst on-mac-window-system (memq window-system '(mac ns))
+  "Non-nil if running on a macOS desktop.")
+
 
 (defun indent-whole-buffer ()
-  "Indent whole buffer."
+  "Indent the whole buffer."
   (interactive)
   (indent-region (point-min) (point-max) nil))
+
 
 (defun rename-file-and-buffer (new-name)
   "Renames both the current buffer and the file it's visiting to NEW-NAME."
