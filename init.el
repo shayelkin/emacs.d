@@ -318,13 +318,13 @@ Image types are symbols like `xbm' or `jpeg'."
    ("C-x i"      . helm-multi-swoop-all)
    ("M-x"        . helm-M-x)
    ("C-c C-c"    . helm-M-x)
-   ("<C-return>" . helm-M-x)
    :map helm-swoop-map
    ("M-i"        . helm-multi-swoop-all-from-helm-swoop)))
 
 ;;; <https://github.com/magnars/expand-region.el>
 (use-package expand-region
-  :bind (("C-c n" . er/expand-region)))
+  :bind
+  (("C-c n" . er/expand-region)))
 
 
 ;;;
@@ -386,6 +386,24 @@ Image types are symbols like `xbm' or `jpeg'."
         auto-dark-detection-method 'osascript)
   :config
   (auto-dark-mode t))
+
+
+;;;
+;;; COPILOT:
+;;;
+
+;;; To build the package using quelpa:
+;; (quelpa '(copilot :fetcher github
+;;          :repo "copilot-emacs/copilot.el"
+;;          :branch "main"
+;;          :files ("dist" "*.el")))
+
+(use-package copilot
+  :init
+  (setq copilot-indent-offset-warning-disable t)
+  :bind
+  (("<f9>"  . copilot-mode)
+   ("C-<return>" . copilot-accept-completion)))
 
 
 ;;;
