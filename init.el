@@ -400,7 +400,6 @@ Image types are symbols like `xbm' or `jpeg'."
    (prog-mode . wucuo-start)))
 
 
-
 ;;; Most code highlighting is based on identifiers, which to me, is redundant
 ;;; and confusing, with every word in a different vibrant color. Prism
 ;;; highlights code based on depth, so blocks and scope are easy to
@@ -442,6 +441,7 @@ Image types are symbols like `xbm' or `jpeg'."
 (use-package dockerfile-mode)
 (use-package protobuf-mode)
 (use-package rust-mode)
+(use-package terraform-mode)
 (use-package yaml-mode)
 
 
