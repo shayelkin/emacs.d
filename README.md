@@ -1,8 +1,12 @@
-# Introduction
+# My initialization files for Emacs 27 (or later)
 
-TO-DO
+## Introduction
 
-# Requirements
+There's hubris in publishing your editor customization files. I don't think mine are better than
+most, but it does make showing others a certain setting much easier than having to copy & paste
+it into a discussion.
+
+## Requirements
 
 I use Emacs 29.1 on macOS and Debian Linux, and do not bother to test my init files in environments
 I don't use. But as far as I can tell, there is nothing in this files that should not work in Emacs
@@ -11,7 +15,7 @@ I don't use. But as far as I can tell, there is nothing in this files that shoul
 Aside from Emacs itself, the only other requirement before using those files, is
 [use-package](https://github.com/jwiegley/use-package), which I use to organize the configuration.
 
-# Errors
+## Errors
 
 I can not claim credit to most of the code herein: it was found online when searching for solutions
 to issues I had with Emacs at the time, and I did not bother to keep a link to the source once I

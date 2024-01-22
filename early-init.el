@@ -28,13 +28,6 @@
 (add-to-list 'default-frame-alist '(height . 50))
 
 
-
-;;; Define after-make-frame-functions here, so it'll take effect for the initial frame too.
-(add-hook 'after-make-frame-functions
-          (lambda (frame)
-            (xterm-mouse-mode 1)))
-
-
 ;;; Load customization early. This helps a few things:
 ;;; 1. It does chrome changing stuff.
 ;;; 2. If customizing a package, this would have the values set before whatever startup code for it
