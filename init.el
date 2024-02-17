@@ -18,11 +18,12 @@
 
 
 ;;;
-;;; - FIX DEFAULT CUSTOMIZATIONS
+;;; - FIX DEFAULTS
 ;;;
 
 
 ;;; Workaround for "Invalid image type 'svg'"
+;;; TO-DO: Drop when I remove support for Emacs versions before 29.
 ;;; <https://debbugs.gnu.org/cgi/bugreport.cgi?bug=59081>
 (when (and on-mac-window-system (version< emacs-version "29"))
   (defun image-type-available-p (type)
@@ -43,11 +44,6 @@ Image types are symbols like `xbm' or `jpeg'."
 ;;; Show line numbers in buffer, column number in the modeline.
 (global-display-line-numbers-mode t)
 (column-number-mode               t)
-
-;;; Never expect me to type a full word when a single letter will do.
-;;; TO-DO: Emacs 28 introduces use-short-answers which can be used once this file
-;;;        drops support for Emacs 27.
-(defalias 'yes-or-no-p 'y-or-n-p)
 
 ;;; Shift+Arrows switch the active window.
 (windmove-default-keybindings)
@@ -73,15 +69,21 @@ Image types are symbols like `xbm' or `jpeg'."
  ;; Chunk size from reading from a subprocess. Set to 1Mb.
  read-process-output-max               (* 1000 1000)
  show-trailing-whitespace              t
- use-dialog-box                        nil)
+ use-dialog-box                        nil
+ ;; use a single letter instead of a full "yes" or "no"
+ use-short-answers                     t)
+
+;;; use-short-answers was introduced in Emacs 28. This does the same in older Emacsen.
+(when (version< emacs-version "28")
+  (defalias 'yes-or-no-p 'y-or-n-p))
+
 
 (set-charset-priority 'unicode)
 
-
-;;; Make URLs underlines and click-able.
+;;; Make URLs underlined and click-able.
 (global-goto-address-mode 1)
 
-;;; (so-long-commentary) describes this mode.
+;;; Performance mitigration for long lines (see 'M-x so-long-commentary').
 (global-so-long-mode)
 
 
@@ -89,8 +91,8 @@ Image types are symbols like `xbm' or `jpeg'."
 ;;; - HOOKS
 ;;;
 
-;;; after-make-frame-function is set in early-init.el, to so it'll take effect for the initial
-;;; frame as well.
+;;; after-make-frame-function should be set in early-init.el, to so it'll take effect for the
+;;; initial frame as well.
 
 ;;; Automatically insert closing parenthesis.
 (add-hook 'prog-mode-hook
@@ -232,8 +234,8 @@ Image types are symbols like `xbm' or `jpeg'."
                     (server-start)))))
 
 
-;;; Limit hl-line (highlight the line at point) to text and programming mode, as it sometimes break
-;;; the more interactive modes.
+;;; Limit hl-line (highlight the line at point) to text and programming mode, as it breaks sone
+;;;  other interactive modes.
 (use-package hl-line
   :hook
   ((prog-mode
@@ -241,8 +243,6 @@ Image types are symbols like `xbm' or `jpeg'."
     literate-calc-mode) . hl-line-mode))
 
 
-;;; At work, I started using GoLand so I'd have a similar environment to my colleagues, and I don't
-;;; get to program in Rust as much as I would like to. As such, I don't use LSP much.
 (use-package eglot
   :hook
   ((rust-mode
@@ -258,6 +258,7 @@ Image types are symbols like `xbm' or `jpeg'."
   (let ((govet (flycheck-checker-get 'go-vet 'command)))
     (when (equal (cadr govet) "tool")
       (setf (cdr govet) (cddr govet)))))
+
 
 (use-package flycheck-popup-tip
   :hook
@@ -292,10 +293,9 @@ Image types are symbols like `xbm' or `jpeg'."
   (add-hook 'makefile-mode-hook 'makefile-executor-mode))
 
 
-;;; Before I found Vterm, I used to have an Emacs and a Terminal.app open
-;;; side-by-side, as no terminal in Emacs was usable for anything more than a
-;;; quick ls. Vterm is actually good (I still keep a Terminal.app window open
-;;; though, because old habits die hard).
+;;; Before I found Vterm, I used to have an Emacs and a Terminal.app open side-by-side, as no
+;;; terminal in Emacs was usable for anything more than a quick ls. Vterm is actually good (I still
+;;; keep a Terminal.app window open though, because old habits die hard).
 (use-package vterm
   :init
   (setq vterm-max-scrollback 100000)
@@ -317,7 +317,7 @@ Image types are symbols like `xbm' or `jpeg'."
   :after
   (helm)
   :bind
-  (("C-s"        . helm-swoop)
+  (("s-f"        . helm-swoop)
    ("C-x i"      . helm-multi-swoop-all)
    ("M-x"        . helm-M-x)
    ("C-c C-c"    . helm-M-x)
@@ -350,12 +350,12 @@ Image types are symbols like `xbm' or `jpeg'."
   :config
   (which-key-mode))
 
+
 ;;; Add colors and single line progress update to compilation-mode
 ;;; <https://codeberg.org/ideasman42/emacs-fancy-compilation>
 (use-package fancy-compilation
   :config
   (fancy-compilation-mode 1))
-
 
 
 ;;;
@@ -414,18 +414,11 @@ Image types are symbols like `xbm' or `jpeg'."
 ;;;
 
 
-;;; Wucuo is a faster alternative to flyspell <https://github.com/redguardtoo/wucuo>
-(use-package wucuo  
-  :hook
-  ((text-mode . wucuo-start)
-   (prog-mode . wucuo-start)))
-
-
-;;; Most code highlighting is based on identifiers, which to me, is redundant
-;;; and confusing, with every word in a different vibrant color. Prism
-;;; highlights code based on depth, so blocks and scope are easy to
-;;; identify. It is living in the year 3000 for code
-;;; highlighting. <https://github.com/alphapapa/prism.el>
+;;; Most code highlighting is based on identifiers, which to me, doesn't provide much
+;;; usefullness, but confusion, with every word in a different vibrant color. Prism
+;;; highlights code based on depth, so blocks and scope are easy to identify.
+;;; I often describe it as living in the year 3000 for highlighting.
+;;; <https://github.com/alphapapa/prism.el>
 (use-package prism
   :hook
   (((c-mode
@@ -490,7 +483,6 @@ Image types are symbols like `xbm' or `jpeg'."
 ;;; buffers, super useful for writing reports, or just trying to figure out my
 ;;; own personal budget. <https://github.com/sulami/literate-calc-mode.el>
 (use-package literate-calc-mode)
-
 
 
 ;;;
