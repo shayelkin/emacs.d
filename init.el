@@ -103,6 +103,15 @@ Image types are symbols like `xbm' or `jpeg'."
           (lambda ()
             (delete-trailing-whitespace)))
 
+;;; This will effectively stop garbage collection while the minibuffer is in use.
+(add-hook 'minibuffer-setup-hook
+          (lambda ()
+            (setq gc-cons-threshold most-positive-fixnum)))
+
+;;; And resume it when the we exit the minibuffer.
+(add-hook 'minibuffer-exit-hook
+          (lambda ()
+            (setq gc-cons-threshold (* 10 1000 1000))))
 
 ;;;
 ;;; - KEY BINDINGS
