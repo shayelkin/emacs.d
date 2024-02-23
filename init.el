@@ -128,9 +128,9 @@ Image types are symbols like `xbm' or `jpeg'."
 ;;; TO-DO: Build equivalent to (describe-personal-keybindings) to keys bound without the use of
 ;;;        use-package.
 
-;;; TO-DO: In Emacs 29, global-set-key and global-unset-key were deprecated in favor of
-;;;        keymap-global-set and keymap-global-unset. Refactor to use them once I drop support for
-;;;        Emacs 28.
+;;; TO-DO: In Emacs 29, define-key, global-set-key and global-unset-key were deprecated in favor of
+;;;        keymap-set, keymap-global-set and keymap-global-unset. Refactor to use them once I drop
+;;;        support for Emacs 28.
 
 
 (global-set-key (kbd "M-<return>") 'fill-paragraph)
@@ -149,6 +149,11 @@ Image types are symbols like `xbm' or `jpeg'."
 
 ;;; Move kill-region (cut) to C-c C-k.
 (global-set-key (kbd "C-c C-k") 'kill-region)
+
+
+;;; When opening Buffer-menu in a new frame, also switch to it: (the default is list-buffers, which
+;;; only opens, and keeps input in the current window)
+(global-set-key (kbd "C-x C-b") 'buffer-menu-other-window)
 
 
 ;;; C-x m to open links in web browsers.
@@ -176,6 +181,8 @@ Image types are symbols like `xbm' or `jpeg'."
 
 ;;; Command key shortcuts for macOS (Emacs maps command to super).
 (when on-mac-window-system
+  ;;; Emulate a 3-button mouse
+  ;(define-key key-translation-map (kbd "s-<mouse-1>") (kbd "<mouse-2>"))
   ;; Maximize the frame (or restore to pre-maximized value)
   (global-set-key   (kbd "s-<return>") 'toggle-frame-maximized)
   ;;  Disable command-t, command-q, command-w, and rebind the latter to copy (M-w).
@@ -469,7 +476,7 @@ Image types are symbols like `xbm' or `jpeg'."
   :init
   ;; Use pandoc to render markdown.
   (setq markdown-command
-        "pandoc --quiet -f markdown -t html -s --mathjax --highlight-style=pygments"))
+        "pandoc --quiet -f markdown_github -t html -s --mathjax --highlight-style=pygments"))
 
 
 (use-package go-mode
