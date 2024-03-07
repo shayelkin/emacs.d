@@ -134,21 +134,13 @@
 ;;; Move kill-region (cut) to C-c C-k.
 (keymap-global-set "C-c C-k" 'kill-region)
 
-
-;;; When opening Buffer-menu in a new frame, also switch to it: (the default is
-;;; list-buffers, which only opens, and keeps input in the current window)
-(keymap-global-set "C-x C-b" 'buffer-menu-other-window)
-
-
 ;;; C-x m to open links in web browsers.
 (keymap-global-set "C-x m" 'browse-url-at-point)
-
 
 ;;; Join this line and the next, regardless on where the point is in the line.
 (keymap-global-set "M-j" (lambda ()
                            (interactive)
                            (join-line -1)))
-
 
 ;;; Change the font scale: by default, this is bound to C-wheel, which cause many accidental
 ;;; font size changes. Instead, bind it to C-S with the +/- keys, or C-S-0 to reset it (the
@@ -166,7 +158,6 @@
 ;;; Make M-S-. undo M-., going back to to where M-. was invoked from.
 (keymap-global-set "M->" 'pop-tag-mark)
 
-
 ;;; Command key shortcuts for macOS (Emacs maps command to super).
 (when on-mac-window-system
   ;;; Emulate a 3-button mouse
@@ -180,8 +171,8 @@
   (keymap-global-unset  "s-q"))
 
 
-;;; I would like to use indent-whole-buffer as a save-hook, but can't because too many files are
-;;; not correctly indented throughout.
+;;; I would like to use indent-whole-buffer as a save-hook, but can't because too many files
+;;; are not correctly indented throughout.
 (add-hook 'prog-mode-hook
           (lambda ()
             (local-set-key (kbd "C-c C-i") 'indent-whole-buffer)))
@@ -294,26 +285,36 @@
 
 
 ;;;
-;;; - IN-BUFFER NAVIGATION:
+;;; - NAVIGATION:
 ;;;
 
-;;; I've tried a few incremental completion packages, and I currently like Helm (and Swoop,
-;;; for searching in buffers) the most.
-(use-package helm
-  :config
-  (helm-mode 1))
+;; Most of those packages need :init rather than config, as they should be enable from the
+;; start, and not lazy loaded.
 
 
-(use-package helm-swoop
-  :after
-  (helm)
+;; Use vertico to display and navigate completions in the minibuffer
+(use-package vertico
+  :init
+  (vertico-mode))
+
+
+;; Enable rich annotations in minibuffer completions
+(use-package marginalia
   :bind
-  (("s-f"        . helm-swoop)
-   ("C-x i"      . helm-multi-swoop-all)
-   ("M-x"        . helm-M-x)
-   ("C-c C-c"    . helm-M-x)
-   :map helm-swoop-map
-   ("M-i"        . helm-multi-swoop-all-from-helm-swoop)))
+  (:map minibuffer-local-map ("M-A" . marginalia-cycle))
+  (:map completion-list-mode-map ("M-A" . marginalia-cycle))
+  :init
+  (marginalia-mode))
+
+
+(use-package consult
+  :bind
+  (("C-s"     . consult-line)
+   ("C-S-s"   . consuly-line-multi)
+   ("C-x C-b" . consult-buffer-other-window)
+   ("M-y"     . consult-yank-pop)
+   ("M-g g"   . consult-goto-line)
+   ("M-g M-g" . consult-goto-line)))
 
 
 ;;; <https://github.com/magnars/expand-region.el>
