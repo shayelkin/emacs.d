@@ -48,9 +48,6 @@ Image types are symbols like `xbm' or `jpeg'."
 ;;; Shift+Arrows switch the active window.
 (windmove-default-keybindings)
 
-;;; Automatically break lines in text modes.
-(add-hook 'text-mode-hook 'turn-on-auto-fill)
-
 ;;; Disable highlighting in shell buffers (both slow and annoying).
 (set-variable 'shell-font-lock-keywords nil)
 
@@ -87,6 +84,10 @@ Image types are symbols like `xbm' or `jpeg'."
 (global-so-long-mode)
 
 
+;;; Use Noto Symbols as fallback for those less-common pictographs
+(set-fontset-font t nil (font-spec :family "Noto Sans Symbols 2") nil :append)
+
+
 ;;;
 ;;; - HOOKS
 ;;;
@@ -94,16 +95,19 @@ Image types are symbols like `xbm' or `jpeg'."
 ;;; after-make-frame-function should be set in early-init.el, to so it'll take effect for the
 ;;; initial frame as well.
 
+;;; Automatically break lines in text modes.
+(add-hook 'text-mode-hook
+          'turn-on-auto-fill)
+
+
 ;;; Automatically insert closing parenthesis.
 (add-hook 'prog-mode-hook
           (lambda ()
             (electric-pair-mode 1)))
 
-
 ;;; Delete trailing whitespace before saving.
 (add-hook 'before-save-hook
-          (lambda ()
-            (delete-trailing-whitespace)))
+          'delete-trailing-whitespace)
 
 ;;; This will effectively stop garbage collection while the minibuffer is in use.
 (add-hook 'minibuffer-setup-hook
@@ -250,12 +254,6 @@ Image types are symbols like `xbm' or `jpeg'."
     literate-calc-mode) . hl-line-mode))
 
 
-(use-package eglot
-  :hook
-  ((rust-mode
-    go-mode)  . eglot-ensure))
-
-
 (use-package flycheck
   :init
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
@@ -296,8 +294,8 @@ Image types are symbols like `xbm' or `jpeg'."
 
 ;;; <https://github.com/Olivia5k/makefile-executor.el>
 (use-package makefile-executor
-  :config
-  (add-hook 'makefile-mode-hook 'makefile-executor-mode))
+  :hook
+  (makefile-mode . makefile-executor-mode))
 
 
 ;;; Before I found Vterm, I used to have an Emacs and a Terminal.app open side-by-side, as no
@@ -320,6 +318,7 @@ Image types are symbols like `xbm' or `jpeg'."
   :config
   (helm-mode 1))
 
+
 (use-package helm-swoop
   :after
   (helm)
@@ -330,6 +329,7 @@ Image types are symbols like `xbm' or `jpeg'."
    ("C-c C-c"    . helm-M-x)
    :map helm-swoop-map
    ("M-i"        . helm-multi-swoop-all-from-helm-swoop)))
+
 
 ;;; <https://github.com/magnars/expand-region.el>
 (use-package expand-region
@@ -388,14 +388,15 @@ Image types are symbols like `xbm' or `jpeg'."
 
 ;;; I used to dislike dark UIs, but it is growing on me. This makes Emacs
 ;;; match the system mode.
-(use-package auto-dark
-  :init
-  ;; Need to enable osascript, as the default Emacs macOS builds do not define
-  ;; ns-do-applescript.
-  (setq auto-dark-allow-osascript t
-        auto-dark-detection-method 'osascript)
-  :config
-  (auto-dark-mode t))
+;; (use-package auto-dark
+;;   :init
+;;   ;; Need to enable osascript, as the default Emacs macOS builds do not define
+;;   ;; ns-do-applescript.
+;;   (setq auto-dark-allow-osascript t
+;;         auto-dark-polling-interval-seconds 30
+;;         auto-dark-detection-method 'osascript)
+;;   :config
+;;   (auto-dark-mode t))
 
 
 ;;;
@@ -420,6 +421,11 @@ Image types are symbols like `xbm' or `jpeg'."
 ;;; LANGUAGE SUPPORT:
 ;;;
 
+;;; Use tree-sitter when possible
+(use-package treesit-auto
+  :config
+  (global-treesit-auto-mode))
+
 
 ;;; Most code highlighting is based on identifiers, which to me, doesn't provide much
 ;;; usefullness, but confusion, with every word in a different vibrant color. Prism
@@ -428,18 +434,8 @@ Image types are symbols like `xbm' or `jpeg'."
 ;;; <https://github.com/alphapapa/prism.el>
 (use-package prism
   :hook
-  (((c-mode
-     cider-repl-mode
-     clojure-mode
-     emacs-lisp-mode
-     eval-expression-minibuffer-setup
-     java-mode
-     ielm-mode
-     lisp-interaction-mode
-     lisp-mode
-     scheme-mode)
-    . prism-mode)
-   (python-mode . prism-whitespace-mode)))
+  ((prog-mode . prism-mode)
+   (python-ts-mode . prism-whitespace-mode)))
 
 
 ;;; Like Magit, Paredit is a reason enough to use Emacs. I imagine that a lot
@@ -459,11 +455,6 @@ Image types are symbols like `xbm' or `jpeg'."
 
 
 (use-package cider)
-(use-package dockerfile-mode)
-(use-package protobuf-mode)
-(use-package rust-mode)
-(use-package terraform-mode)
-(use-package yaml-mode)
 
 
 (use-package markdown-mode
@@ -477,13 +468,6 @@ Image types are symbols like `xbm' or `jpeg'."
   ;; Use pandoc to render markdown.
   (setq markdown-command
         "pandoc --quiet -f markdown_github -t html -s --mathjax --highlight-style=pygments"))
-
-
-(use-package go-mode
-  :hook
-  (go-mode     . lsp-deferred)
-  (before-save . lsp-format-buffer)
-  (before-save . lsp-organize-imports))
 
 
 ;;; The child of literate programming and Calc mode. Inline arithmetic in text
