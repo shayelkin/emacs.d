@@ -206,8 +206,9 @@
   (require 'use-package))
 (require 'bind-key)
 
-;;; This will download and install packages mentions below (but won't upgrade existing ones). It's
-;;; ok as I only run Emacs on handful of desktops, and don't change the packages used too often.
+;;; This will download and install packages mentions below (but won't upgrade existing
+;;; ones). It's ok as I only run Emacs on handful of desktops, and don't change the packages
+;;; used too often.
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
 
@@ -216,8 +217,8 @@
 ;;; - BUILT IN PACKAGES:
 ;;;
 
-;;; I use use-package for built in packages too. This keeps the per-package configuration neatly
-;;; organized.
+;;; I use use-package for built in packages too. This keeps the per-package configuration
+;;; neatly organized.
 
 
 ;;; Always server-start on a graphical system.
@@ -229,8 +230,8 @@
                     (server-start)))))
 
 
-;;; Limit hl-line (highlight the line at point) to text and programming mode, as it breaks sone
-;;;  other interactive modes.
+;;; Limit hl-line (highlight the line at point) to text and programming mode, as it breaks
+;;;  sone other interactive modes.
 (use-package hl-line
   :hook
   ((prog-mode
@@ -282,9 +283,9 @@
   (makefile-mode . makefile-executor-mode))
 
 
-;;; Before I found Vterm, I used to have an Emacs and a Terminal.app open side-by-side, as no
-;;; terminal in Emacs was usable for anything more than a quick ls. Vterm is actually good (I still
-;;; keep a Terminal.app window open though, because old habits die hard).
+;;; Before I found Vterm, I used to have an Emacs and a Terminal.app open side-by-side, as
+;;; no terminal in Emacs was usable for anything more than a quick ls. Vterm is actually
+;;; good (I still keep a Terminal.app window open though, because old habits die hard).
 (use-package vterm
   :init
   (setq vterm-max-scrollback 100000)
@@ -296,8 +297,8 @@
 ;;; - IN-BUFFER NAVIGATION:
 ;;;
 
-;;; I've tried a few incremental completion packages, and I currently like Helm (and Swoop, for
-;;; searching in buffers) the most.
+;;; I've tried a few incremental completion packages, and I currently like Helm (and Swoop,
+;;; for searching in buffers) the most.
 (use-package helm
   :config
   (helm-mode 1))
