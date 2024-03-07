@@ -1,10 +1,10 @@
 ;;;
-;;; init.el --- For Emacs 27+
+;;; init.el --- For Emacs 29.1+
 ;;;
 
 
 ;;; Require Emacs from this decade, don't bother with backwards compatibility.
-(when (version< emacs-version "27")
+(when (version< emacs-version "29.1")
   (error "Time to upgrade this Emacs installation!"))
 
 
@@ -20,19 +20,6 @@
 ;;;
 ;;; - FIX DEFAULTS
 ;;;
-
-
-;;; Workaround for "Invalid image type 'svg'"
-;;; TO-DO: Drop when I remove support for Emacs versions before 29.
-;;; <https://debbugs.gnu.org/cgi/bugreport.cgi?bug=59081>
-(when (and on-mac-window-system (version< emacs-version "29"))
-  (defun image-type-available-p (type)
-    "Return t if image type TYPE is available.
-Image types are symbols like `xbm' or `jpeg'."
-    (if (eq 'svg type)
-        nil
-      (and (fboundp 'init-image-library)
-           (init-image-library type)))))
 
 
 ;;; That Blink-Cursor is enabled by default should be considered a crime.
@@ -53,7 +40,7 @@ Image types are symbols like `xbm' or `jpeg'."
 
 ;;; Most of those are self-explanatory:
 (setq-default
- fill-column      99
+ fill-column      92
  indent-tabs-mode nil)
 
 (setq
@@ -126,74 +113,71 @@ Image types are symbols like `xbm' or `jpeg'."
 
 ;;; The most important binding is set outside of Emacs: remapping Caps Lock to Control.
 
-;;; As I'm using use-package, I prefer where possible to set keys in a use-package deceleration, so
-;;; they could be listed by (describe-personal-keybindings).
+;;; As I'm using use-package, I prefer where possible to set keys in a use-package
+;;; deceleration, so they could be listed by (describe-personal-keybindings).
 
-;;; TO-DO: Build equivalent to (describe-personal-keybindings) to keys bound without the use of
-;;;        use-package.
-
-;;; TO-DO: In Emacs 29, define-key, global-set-key and global-unset-key were deprecated in favor of
-;;;        keymap-set, keymap-global-set and keymap-global-unset. Refactor to use them once I drop
-;;;        support for Emacs 28.
+;;; TODO: Build equivalent to (describe-personal-keybindings) to keys bound without the use
+;;;       of use-package.
 
 
-(global-set-key (kbd "M-<return>") 'fill-paragraph)
-
+(keymap-global-set "M-<return>" 'fill-paragraph)
 
 ;;; Probably the only CUA bindings I use.
 ;;; As a bonus, C-z overrides the default binding of suspend-frame, which is useless imo.
-(global-set-key (kbd "C-z") 'undo)
-(global-set-key (kbd "C-.") 'completion-at-point)
+(keymap-global-set "C-z" 'undo)
+(keymap-global-set "C-." 'completion-at-point)
 
-
-;;; I never delete a single character: C-w, and retyping the word is faster than navigating to a
-;;; specific character in it.
-(global-set-key (kbd "C-w") 'backward-kill-word)
-
+;;; I never delete a single character: C-w, and retyping the word is faster than navigating
+;;; to a specific character in it.
+(keymap-global-set "C-w" 'backward-kill-word)
 
 ;;; Move kill-region (cut) to C-c C-k.
-(global-set-key (kbd "C-c C-k") 'kill-region)
+(keymap-global-set "C-c C-k" 'kill-region)
 
 
-;;; When opening Buffer-menu in a new frame, also switch to it: (the default is list-buffers, which
-;;; only opens, and keeps input in the current window)
-(global-set-key (kbd "C-x C-b") 'buffer-menu-other-window)
+;;; When opening Buffer-menu in a new frame, also switch to it: (the default is
+;;; list-buffers, which only opens, and keeps input in the current window)
+(keymap-global-set "C-x C-b" 'buffer-menu-other-window)
 
 
 ;;; C-x m to open links in web browsers.
-(global-set-key (kbd "C-x m") 'browse-url-at-point)
+(keymap-global-set "C-x m" 'browse-url-at-point)
 
 
 ;;; Join this line and the next, regardless on where the point is in the line.
-(global-set-key (kbd "M-j") (lambda () (interactive) (join-line -1)))
+(keymap-global-set "M-j" (lambda ()
+                           (interactive)
+                           (join-line -1)))
 
 
-;;; Change the font scale: by default, this is bound to C-wheel, which cause many accidental font
-;;; size changes. Instead, bind it to C-S with the +/- keys, or C-S-0 to reset it (the latter is
-;;; bound by default to paredit-forward-slurp-sexp, but that command is also bound to C-<right>,
-;;; which is what I use).
-(global-unset-key (kbd "<C-wheel-up>"))
-(global-unset-key (kbd "<C-wheel-down>"))
-(global-set-key   (kbd "C-+") 'text-scale-increase)
-(global-set-key   (kbd "C-_") 'text-scale-decrease)
-(global-set-key   (kbd "C-)") (lambda () (interactive) (text-scale-increase 0)))
+;;; Change the font scale: by default, this is bound to C-wheel, which cause many accidental
+;;; font size changes. Instead, bind it to C-S with the +/- keys, or C-S-0 to reset it (the
+;;; latter is bound by default to paredit-forward-slurp-sexp, but that command is also bound
+;;; to C-<right>, which is what I use).
+(keymap-global-unset "C-<wheel-up>")
+(keymap-global-unset "C-<wheel-down>")
+(keymap-global-set   "C-+" 'text-scale-increase)
+(keymap-global-set   "C-_" 'text-scale-decrease)
+(keymap-global-set   "C-)" (lambda ()
+                             (interactive)
+                             (text-scale-increase 0)))
 
 
 ;;; Make M-S-. undo M-., going back to to where M-. was invoked from.
-(global-set-key (kbd "M->") 'pop-tag-mark)
+(keymap-global-set "M->" 'pop-tag-mark)
 
 
 ;;; Command key shortcuts for macOS (Emacs maps command to super).
 (when on-mac-window-system
   ;;; Emulate a 3-button mouse
-  ;(define-key key-translation-map (kbd "s-<mouse-1>") (kbd "<mouse-2>"))
-  ;; Maximize the frame (or restore to pre-maximized value)
-  (global-set-key   (kbd "s-<return>") 'toggle-frame-maximized)
-  ;;  Disable command-t, command-q, command-w, and rebind the latter to copy (M-w).
-  (global-unset-key (kbd "s-t"))
-  (global-unset-key (kbd "s-w"))
-  (global-set-key   (kbd "s-w") 'kill-ring-save)
-  (global-unset-key (kbd "s-q")))
+  ;;(keymap-set key-translation-map "s-<mouse-1>" "<mouse-2>")
+  ;;; Maximize the frame (or restore to pre-maximized value)
+  (keymap-global-set    "s-RET" 'toggle-frame-maximized)
+  ;;;  Disable command-t, command-q, command-w, and rebind the latter to copy (M-w).
+  (keymap-global-unset  "s-t")
+  (keymap-global-unset  "s-w")
+  (keymap-global-set    "s-w" 'kill-ring-save)
+  (keymap-global-unset  "s-q"))
 
 
 ;;; I would like to use indent-whole-buffer as a save-hook, but can't because too many files are
