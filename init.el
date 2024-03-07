@@ -57,12 +57,6 @@
  ;; use a single letter instead of a full "yes" or "no"
  use-short-answers                     t)
 
-;;; use-short-answers was introduced in Emacs 28. This does the same in older Emacsen.
-(when (version< emacs-version "28")
-  (defalias 'yes-or-no-p 'y-or-n-p))
-
-
-(set-charset-priority 'unicode)
 
 ;;; Make URLs underlined and click-able.
 (global-goto-address-mode 1)
@@ -70,6 +64,7 @@
 ;;; Performance mitigration for long lines (see 'M-x so-long-commentary').
 (global-so-long-mode)
 
+(set-charset-priority 'unicode)
 
 ;;; Use Noto Symbols as fallback for those less-common pictographs
 (set-fontset-font t nil (font-spec :family "Noto Sans Symbols 2") nil :append)
@@ -355,35 +350,31 @@
 ;;; - MACOS COMPATIBILITY:
 ;;;
 
-;;; <https://github.com/purcell/exec-path-from-shell>
-(use-package exec-path-from-shell
-  :if on-mac-window-system
-  :init
-  (setq exec-path-from-shell-check-startup-files nil)
-  :config
-  (exec-path-from-shell-initialize))
+(when on-mac-window-system
+  ;;; I used to dislike dark UIs, but it is growing on me. This makes Emacs
+  ;;; match the system mode, but only
+  (when on-homebrew-emacs-plus
+    (use-package auto-dark
+      :after (prism)
+      :hook
+      ((audo-dark-dark-mode . prism-set-colors)
+       (auto-dark-light-mode . prism-set-colors))
+      :config
+      (auto-dark-mode t)))
 
+  ;;; Emacs Plus injects the PATH automatically, so no need for exec-path-from-shell there.
+  (use-package exec-path-from-shell
+    :if (not on-homebrew-emacs-plus)
+    :init
+    (setq exec-path-from-shell-check-startup-files nil)
+    :config
+    (exec-path-from-shell-initialize))
 
-;;; For invoking <https://kapeli.com/dash>, the offline API documentation
-;;; browser from Emacs.
-(use-package dash-at-point
-  :if on-mac-window-system
-  :bind
-  ("C-?" . dash-at-point))
-
-
-;;; I used to dislike dark UIs, but it is growing on me. This makes Emacs
-;;; match the system mode.
-;; (use-package auto-dark
-;;   :init
-;;   ;; Need to enable osascript, as the default Emacs macOS builds do not define
-;;   ;; ns-do-applescript.
-;;   (setq auto-dark-allow-osascript t
-;;         auto-dark-polling-interval-seconds 30
-;;         auto-dark-detection-method 'osascript)
-;;   :config
-;;   (auto-dark-mode t))
-
+  ;;; For invoking <https://kapeli.com/dash>, the offline API documentation
+  ;;; browser from Emacs.
+  (use-package dash-at-point
+    :bind
+    ("C-?" . dash-at-point)))
 
 ;;;
 ;;; COPILOT:

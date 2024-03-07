@@ -6,6 +6,10 @@
 (defconst on-mac-window-system (memq window-system '(mac ns))
   "Non-nil if running on a macOS desktop.")
 
+(defconst on-homebrew-emacs-plus
+  (cl-search "emacs-plus" system-configuration-options)
+  "Non-nil if this Emacs originated in the Emacs is from the Emacs Plus package
+ (https://github.com/d12frosted/homebrew-emacs-plus)")
 
 (defun indent-whole-buffer ()
   "Indent the whole buffer."
