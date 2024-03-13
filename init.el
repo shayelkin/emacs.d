@@ -304,9 +304,7 @@
 
 (use-package consult
   :bind
-  (("C-s"     . consult-line)
-   ("C-S-s"   . consuly-line-multi)
-   ("C-x C-b" . consult-buffer-other-window)
+  (("C-x C-b" . consult-buffer-other-window)
    ("M-y"     . consult-yank-pop)
    ("M-g g"   . consult-goto-line)
    ("M-g M-g" . consult-goto-line)))
@@ -447,9 +445,8 @@
         "pandoc --quiet -f markdown_github -t html -s --mathjax --highlight-style=pygments"))
 
 
-;;; The child of literate programming and Calc mode. Inline arithmetic in text
-;;; buffers, super useful for writing reports, or just trying to figure out my
-;;; own personal budget. <https://github.com/sulami/literate-calc-mode.el>
+;;; The child of literate programming and Calc mode. Inline arithmetic in text buffers,
+;;; super useful for writing reports, or just trying to do my budget. <https://github.com/sulami/literate-calc-mode.el>
 (use-package literate-calc-mode)
 
 
